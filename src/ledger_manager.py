@@ -10,7 +10,13 @@ class LedgerManager:
             'ledger_id', 'user_id', 'points_delta', 
             'source', 'source_ref', 'created_at'
         ]
-        self.ledger_df = pd.DataFrame(columns=self.ledger_columns)
+        # Eğer outputs/points_ledger.csv varsa onu yükle, yoksa boş başlat
+        import os
+        ledger_path = 'outputs/points_ledger.csv'
+        if os.path.exists(ledger_path):
+            self.ledger_df = pd.read_csv(ledger_path)
+        else:
+            self.ledger_df = pd.DataFrame(columns=self.ledger_columns)
 
     # Bir kullanıcıya puan ekler, kaynağını ve referansını(örn.challenge ödülü) kaydeder.
     def add_entry(self, user_id, points, source, source_ref):

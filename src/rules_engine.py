@@ -57,7 +57,7 @@ def evaluate_challenges(all_user_states, challenges_df):
                 'as_of_date': user_state['as_of_date'],
                 'triggered_challenges': "|".join(triggered_df['challenge_id'].tolist()),
                 'selected_challenge': selected['challenge_id'],
-                'reward_points': selected['reward_points'], # Sadece seçilen ödülün puanı verilir [cite: 69]
+                'reward_points': selected['reward_points'], # Sadece seçilen ödülün puanı verilir
                 'suppressed_challenges': "|".join(suppressed),
                 'timestamp': datetime.now()
             }
