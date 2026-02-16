@@ -1,6 +1,9 @@
 import pandas as pd
 from datetime import timedelta
 
+# Kullanıcı bazlı metrikleri hesaplar ve aktivite verisini okunabilir hale getirir.
+
+# Bir kullanıcının belirli bir tarihteki ve son 7 gündeki izleme alışkanlıklarını ve başarılarını özetler.
 def get_user_state(user_id, as_of_date, activity_df):
     as_of_date = pd.to_datetime(as_of_date)
     
@@ -44,6 +47,7 @@ def get_user_state(user_id, as_of_date, activity_df):
     metrics["watch_streak_days"] = streak
     return metrics
 
+# Aktivite verisindeki show_id'leri, show isimlerine çevirerek okunabilir bir tablo haline getirir.
 def enrich_activity_with_names(activity_df, shows_df):
     """ID listelerini okunabilir isim listelerine dönüştürür."""
     show_map = shows_df.set_index('show_id')['show_name'].to_dict()
@@ -59,7 +63,7 @@ def enrich_activity_with_names(activity_df, shows_df):
     enriched_df = activity_df.copy()
     enriched_df['watched_show_names'] = enriched_df['shows_watched'].apply(map_ids_to_names)
     return enriched_df
-
+# Tüm kullanıcılar için yukarıdaki metrikleri topluca hesaplar ve dataframe olarak döndürür.
 def generate_all_user_states(as_of_date, users_df, activity_df):
     all_states = []
     for user_id in users_df['user_id']:

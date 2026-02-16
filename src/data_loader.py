@@ -1,5 +1,8 @@
 import pandas as pd 
 
+# Tüm temel veri kaynaklarını okuyup analiz için hazırlar.
+
+# Kullanıcı, aktivite, içerik ve bölüm verilerini okuyup dataframe olarak döndürür.
 def load_all_data():
     users = pd.read_csv("data/users.csv")
     activity = pd.read_csv("data/activity_events.csv",parse_dates=["date"])
@@ -10,5 +13,5 @@ def load_all_data():
 
 def get_catalog_maps(shows_df):
     """Show ID'lerini isimlere eşleyen bir sözlük döner."""
-    # show_id -> show_name eşleşmesi
+    # show_id -> show_name eşleyen bir sözlük üretir.
     return shows_df.set_index('show_id')['show_name'].to_dict()
