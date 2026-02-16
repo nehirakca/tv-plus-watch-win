@@ -2,7 +2,7 @@ import pandas as pd
 import os
 from src.data_loader import load_all_data
 from src.metrics_engine import generate_all_user_states, enrich_activity_with_names
-from src.rules_engine import evaluate_challenges, check_badges
+from src.rules_engine import evaluate_challenges, check_badges, what_if_simulation
 from src.ledger_manager import LedgerManager
 
 def main():
@@ -28,6 +28,18 @@ def main():
     print("Görev koşulları ve öncelikler kontrol ediliyor...")
     # Priority kuralına göre tetiklenenlerden en yüksek öncelikliyi seçer [cite: 66-67]
     challenge_awards = evaluate_challenges(all_user_states, challenges)
+    # Bildirim üretimi
+    notifications = []
+    for idx, row in challenge_awards.iterrows():
+        notif = {
+            'notification_id': str(idx),
+            'user_id': row['user_id'],
+            'channel': 'BiP',
+            'message': f"Tebrikler! {row['selected_challenge']} challenge ödülünü kazandınız.",
+            'sent_at': row['timestamp']
+        }
+        notifications.append(notif)
+    notifications_df = pd.DataFrame(notifications)
 
     # 4. Puanları Ledger'a İşleme [cite: 79-87]
     print("Puan hareketleri ledger'a kaydediliyor...")
@@ -59,8 +71,19 @@ def main():
     enriched_activity.to_csv('outputs/enriched_activity_history.csv', index=False)
 
     # 7. Tüm Çıktıları Kaydetme [cite: 70, 80, 102]
-    ledger.save_outputs(challenge_awards, badge_awards_df)
+    ledger.save_outputs(challenge_awards, badge_awards_df, notifications_df)
     
+    # 8. Bonus: Backend What-if Simülasyonu Örneği
+    print("What-if simülasyonu örneği:")
+    sample_user_id = users['user_id'].iloc[0]
+    extra_minutes = 30
+    result = what_if_simulation(sample_user_id, extra_minutes, AS_OF_DATE, users, activity, challenges)
+    print(f"Kullanıcı: {sample_user_id}, Ek İzleme: {extra_minutes} dk")
+    print(f"Tetiklenen Challenge'lar: {result['triggered_challenges']}")
+    print(f"Seçilen Challenge: {result['selected_challenge']}")
+    print(f"Suppressed Challenge'lar: {result['suppressed_challenges']}")
+    print(f"Kazanılacak Rozetler: {result['badges']}")
+
     print("\n" + "="*30)
     print("✅ İŞLEM BAŞARIYLA TAMAMLANDI!")
     print("Sonuçlar 'outputs/' klasörüne kaydedildi.")

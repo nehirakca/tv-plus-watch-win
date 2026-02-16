@@ -38,18 +38,17 @@ class LedgerManager:
         return user_ledger['points_delta'].sum()
 
     # Puan defteri, challenge ödülleri ve rozet ödüllerini CSV olarak outputs klasörüne kaydeder.
-    def save_outputs(self, challenge_awards_df, badge_awards_df):
+    def save_outputs(self, challenge_awards_df, badge_awards_df, notifications_df=None):
         # Hesaplanan ödülleri ve puan defterini diske kaydeder.
-
         import os
         if not os.path.exists('outputs'):
             os.makedirs('outputs')
-            
         # Puan defterini kaydet 
         self.ledger_df.to_csv('outputs/points_ledger.csv', index=False)
-        
         # Challenge ödüllerini kaydet
         challenge_awards_df.to_csv('outputs/challenge_awards.csv', index=False)
-        
         # Rozet ödüllerini kaydet 
         badge_awards_df.to_csv('outputs/badge_awards.csv', index=False)
+        # Bildirimleri kaydet
+        if notifications_df is not None:
+            notifications_df.to_csv('outputs/notifications.csv', index=False)
